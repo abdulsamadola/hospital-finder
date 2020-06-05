@@ -71,7 +71,8 @@ const CardTamplate = ({
             <p style={alignRight}> {name}</p>
             <p style={alignRight}>{formatted_address}</p>
             <p style={alignRight}>
-              {`Rating: ${rating}`} <Rate disabled defaultValue={rating} />
+              {`Rating: ${rating}`} <Rate disabled defaultValue={rating} />(
+              <span style={{ color: "darkred" }}>{user_count}</span>)
             </p>
             <p
               style={{ ...alignRight, color: colors.primary }}
@@ -110,8 +111,7 @@ const CardTamplate = ({
               : formatted_address}
           </p>
           <p>
-            {`Rating: ${rating}`} <Rate disabled defaultValue={rating} />(
-            <span style={{ color: "darkred" }}>{user_count}</span>)
+            {`Rating: ${rating}`} <Rate disabled defaultValue={rating} />
           </p>
           <p style={{ color: colors.primary }}>{`Currently Open: ${
             open ? "Yes" : "No"
