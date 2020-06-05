@@ -1,0 +1,33 @@
+#components-dropdown-demo-dropdown-button .ant-dropdown-button {
+  margin: 0 8px 8px 0;
+}
+
+#components-dropdown-demo-dropdown-button
+  .ant-btn-group-rtl.ant-dropdown-button {
+  margin: 0 0 8px 8px;
+}
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 999999999;
+  -webkit-box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  -moz-box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.title {
+  position: abolute;
+  bottom: -80px;
+  color: wheat;
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width: 768px) {
+  /* Styles */
+
+  .header .title {
+    display: none;
+  }
+}
