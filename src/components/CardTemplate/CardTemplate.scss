@@ -1,0 +1,36 @@
+// .custom-image img {
+//   display: block;
+// }
+.card {
+  -webkit-box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  -moz-box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  box-shadow: 10px 10px 39px -4px rgba(0, 0, 0, 0.53);
+  border-radius: 10px;
+  background-image: none;
+}
+.card:hover {
+  transition: all 1.5ms ease-in;
+  animation: card 1.5s ease-in infinite;
+  outline: none;
+}
+.card:focus {
+  outline: none;
+}
+@keyframes card {
+  0% {
+    background-color: rgb(219, 192, 192);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: scaleX(1);
+    transform: translateY(0);
+  }
+}
+.custom-card {
+  padding: 10px 16px;
+}
+.custom-card p {
+  color: #999;
+}
