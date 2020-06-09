@@ -104,9 +104,11 @@ const CardTamplate = ({
           <img alt={name} width="35%" src={`${icon}`} />
         </div>
         <div className="custom-card">
-          <h3>{name.length > 30 ? Utils.truncateString(name, 30) : name}</h3>
+          <h3>
+            {name && name.length > 30 ? Utils.truncateString(name, 30) : name}
+          </h3>
           <p>
-            {formatted_address.length > 50
+            {formatted_address && formatted_address.length > 50
               ? Utils.truncateString(formatted_address, 50)
               : formatted_address}
           </p>

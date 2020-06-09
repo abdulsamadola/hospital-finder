@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { message } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+
+import firebase from "../../Services/firebase";
 import ShowHospitals from "../ShowHospitals/ShowHospitals";
 import "./Home.scss";
 import Api from "../../Services/dataService";
@@ -19,20 +23,24 @@ import {
   SearchOutlined,
   DownOutlined,
   PullRequestOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import colors from "../../styles";
-import { IHospital } from "../../common";
+import { IHospital, IJustifyCenter } from "../../common";
 
 const { Header } = Layout;
 const { Title, Text } = Typography;
 
 const Home = (): JSX.Element => {
   const [results, setResults] = useState<any[]>([]);
+  const [historyResults, setHistoryResults] = useState<any[]>([]);
   const [hospitalResults, setHospitalResults] = useState<IHospital[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isHistoryButtonClick, setIsHistoryButtonClick] = useState<boolean>(
+    false
+  );
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
-  // const [searchLoading, setSearchLoading] = useState<boolean>(true);
   const [coordinate, setCoordinate] = useState<object>({});
 
   function onInputChange(input: string): void {
@@ -43,15 +51,28 @@ const Home = (): JSX.Element => {
 
   const placesAutoCompleteHandler = (input: string): void => {
     if (debouncedInput === "") return;
-    setIsLoading(true);
+    //setIsLoading(true);
+    setIsHistoryButtonClick(false);
 
     Api.getPlacesAutocomplete(input).then((res) => {
       setResults(res["predictions"]);
-      setIsLoading(false);
+      // setIsLoading(false);
     });
   };
+  function confirm(e: any) {
+    console.log(e);
+    message.success("Click on Yes");
+  }
 
-  const getAddressCoordinate = (placeID: string, address: string): void => {
+  function cancel(e: any) {
+    console.log(e);
+    message.error("Click on No");
+  }
+  const getAddressCoordinate = (
+    placeID: string,
+    address: string,
+    description: string
+  ): void => {
     setInput(address);
     setHospitalResults([]);
     setResults([]);
@@ -64,10 +85,23 @@ const Home = (): JSX.Element => {
       //Get Nearby Hospital
       fetchHospitalsHandler(coordinate);
     });
+    //Save the address/placeID  as history on Firebase
+    saveAddressOnFirebase({ placeID, address, description });
+  };
+
+  const saveAddressOnFirebase = (data: {
+    placeID: string;
+    address: string;
+    description: string;
+  }): void => {
+    const findPlace = historyResults.find((res) => res.placeID == data.placeID);
+    const db = firebase.firestore();
+    if (!findPlace) db.collection("search-histories").add(data);
   };
 
   const fetchHospitalsHandler = (coord: object): void => {
     setIsFocus(false);
+    setIsHistoryButtonClick(false);
     setIsLoading(true);
     setResults([]);
     Api.getHospitals(coord, 1000).then(({ results }) => {
@@ -79,9 +113,20 @@ const Home = (): JSX.Element => {
   function getHospitalsByDistance(e: any): void {
     setHospitalResults([]);
     setIsLoading(true);
+    setIsHistoryButtonClick(false);
     const radius = parseInt(e.key);
     Api.getHospitals(coordinate, radius).then(({ results }): void => {
       setHospitalResults(results);
+      setIsLoading(false);
+    });
+  }
+  function getHeathRelatedPlaces(): void {
+    setHospitalResults([]);
+    setIsLoading(true);
+    setIsHistoryButtonClick(false);
+    Api.getHealthRelatedLocations(input).then(({ results }): void => {
+      setHospitalResults(results);
+      console.log(results);
       setIsLoading(false);
     });
   }
@@ -90,7 +135,7 @@ const Home = (): JSX.Element => {
     placesAutoCompleteHandler(debouncedInput);
   }, [debouncedInput]);
 
-  useEffect((): void => {
+  useEffect(() => {
     setIsLoading(true);
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition((position: Position): void => {
@@ -101,13 +146,28 @@ const Home = (): JSX.Element => {
         setCoordinate(coord);
         fetchHospitalsHandler(coord);
       });
+    const db = firebase.firestore();
+    return db.collection("search-histories").onSnapshot((snapShot) => {
+      const historyData: any[] = [];
+      snapShot.forEach((doc) =>
+        historyData.push({ ...doc.data(), id: doc.id })
+      );
+      setHistoryResults(historyData.reverse());
+    });
   }, []);
 
-  const justifyCenter: any = {
-    position: "absolute",
-    top: "50vh",
-    left: "50vw",
+  const clearRecentSearchHistories = async () => {
+    const db = firebase.firestore();
+    const history = await db.collection("search-histories");
+    historyResults.forEach((doc) => history.doc(doc.id).delete());
   };
+
+  const clearSearchHistory = async (id: string) => {
+    const db = firebase.firestore();
+    const history = await db.collection("search-histories");
+    history.doc(id).delete();
+  };
+
   const menu = (
     <Menu onClick={getHospitalsByDistance} style={{ zIndex: 99999999999999 }}>
       <Menu.Item key="5000" icon={<PullRequestOutlined />}>
@@ -127,6 +187,35 @@ const Home = (): JSX.Element => {
       </Menu.Item>
     </Menu>
   );
+
+  const historyViewHandler = (): void => {
+    setResults([]);
+    setIsHistoryButtonClick(!isHistoryButtonClick);
+  };
+  const suggestionCardStyle = {
+    width: "50vw",
+    alignSelf: "center",
+    marginTop: 0,
+    borderRadius: 10,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    zIndex: 999999999,
+    backgroundColor: "#fff",
+  };
+
+  const searchSubmissionHandler = (
+    e: React.FormEvent<HTMLFormElement>
+  ): void => {
+    e.preventDefault();
+    if (
+      input.includes("medical") ||
+      input.includes("hospital") ||
+      input.includes("clinic") ||
+      input.includes("hospital") ||
+      input.includes("pharmacy")
+    )
+      getHeathRelatedPlaces();
+  };
   return (
     <div>
       {/* <NavBar /> */}
@@ -163,20 +252,27 @@ const Home = (): JSX.Element => {
                 zIndex: 99999,
               }}
             >
-              <Input
-                size="large"
-                onChange={(e) => onInputChange(e.target.value)}
-                onFocus={() => setIsFocus(true)}
-                value={input}
-                style={{
-                  alignSelf: "center",
-                  width: "40vw",
-                  boxShadow: "none",
-                  outlineColor: "transparent",
-                }}
-                placeholder="Type location..."
-                prefix={<SearchOutlined />}
-              />
+              <form onSubmit={(e) => searchSubmissionHandler(e)}>
+                <Input
+                  size="large"
+                  onChange={(e) => onInputChange(e.target.value)}
+                  onFocus={() => {
+                    setIsFocus(true);
+                    setIsHistoryButtonClick(false);
+                  }}
+                  value={input}
+                  style={{
+                    alignSelf: "center",
+                    width: "40vw",
+                    boxShadow: "none",
+                    outlineColor: "transparent",
+                  }}
+                  placeholder="Type location..."
+                  prefix={<SearchOutlined />}
+                  suffix={<HistoryOutlined onClick={historyViewHandler} />}
+                />
+              </form>
+
               <div>
                 <Dropdown overlay={menu}>
                   <Button size="large">
@@ -185,19 +281,8 @@ const Home = (): JSX.Element => {
                 </Dropdown>
               </div>
             </div>
-
-            <div
-              style={{
-                width: "50vw",
-                alignSelf: "center",
-                marginTop: 0,
-                borderRadius: 10,
-                borderTopLeftRadius: 0,
-                borderTopRightRadius: 0,
-                zIndex: 999999999,
-                backgroundColor: "#fff",
-              }}
-            >
+            {/* Suggestion Card */}
+            <div style={suggestionCardStyle}>
               {isFocus && results.length > 0 && (
                 // <SearchSuggestions data={results} />
                 <div className="demo-infinite-container">
@@ -206,7 +291,11 @@ const Home = (): JSX.Element => {
                     renderItem={({ structured_formatting: item, place_id }) => (
                       <List.Item
                         onClick={() =>
-                          getAddressCoordinate(place_id, item["main_text"])
+                          getAddressCoordinate(
+                            place_id,
+                            item["main_text"],
+                            item["secondary_text"]
+                          )
                         }
                         key={item["main_text"]}
                       >
@@ -216,13 +305,58 @@ const Home = (): JSX.Element => {
                         />
                       </List.Item>
                     )}
-                  >
-                    {/* {searchLoading && (
-                      <div className="demo-loading-container">
-                        <Spin />
-                      </div>
-                    )} */}
-                  </List>
+                  ></List>
+                </div>
+              )}
+            </div>
+            {/* History Card */}
+            <div style={suggestionCardStyle}>
+              {isHistoryButtonClick && historyResults.length > 0 && (
+                <span
+                  onClick={() => {
+                    if (window.confirm("Clear Recent Searches ?")) {
+                      clearRecentSearchHistories();
+                    }
+                  }}
+                >
+                  Clear Recent Searches
+                </span>
+              )}
+
+              {isHistoryButtonClick && (
+                // <SearchSuggestions data={results} />
+
+                <div
+                  className="demo-infinite-container"
+                  onBlur={() => setIsHistoryButtonClick(false)}
+                >
+                  <List
+                    dataSource={historyResults}
+                    renderItem={({ placeID, address, description, id }) => (
+                      <List.Item key={placeID}>
+                        <div
+                          style={{ marginLeft: 10, textAlign: "left" }}
+                          onClick={() =>
+                            getAddressCoordinate(placeID, address, description)
+                          }
+                        >
+                          <List.Item.Meta
+                            title={address}
+                            description={description}
+                          />
+                        </div>
+
+                        <CloseOutlined
+                          style={{ marginRight: 50 }}
+                          onClick={() => {
+                            if (window.confirm("Remove this Search ?")) {
+                              clearSearchHistory(id);
+                            }
+                          }}
+                        />
+                      </List.Item>
+                    )}
+                  ></List>
                 </div>
               )}
             </div>
@@ -230,7 +364,15 @@ const Home = (): JSX.Element => {
         </div>
       </Header>
       {isLoading && (
-        <div style={justifyCenter}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            marginTop: 100,
+          }}
+        >
           <Space size="large">
             <Spin size="large" tip="Loading, please wait..." />
           </Space>
@@ -241,16 +383,18 @@ const Home = (): JSX.Element => {
           <ShowHospitals data={hospitalResults} />
         </div>
       )}
-      {hospitalResults.length <= 0 && !isLoading && (
-        <div style={{ position: "relative" }}>
-          <p
-            style={{
-              ...justifyCenter,
-              color: colors.red,
-              left: "20vw",
-              fontSize: 17,
-            }}
-          >
+      {!isLoading && hospitalResults.length <= 0 && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            marginTop: 100,
+            color: colors.red,
+          }}
+        >
+          <p>
             {`Opps! we couldn't find any nearby Hospitals.\n
               Suggestions:\n
               Try different locations.\n

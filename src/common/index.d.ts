@@ -33,3 +33,24 @@ export interface IHospital {
   types?: [];
   user_ratings_total?: number;
 }
+
+export interface IFirebase {
+  apiKey: string;
+  authDomain: string;
+  databaseURL: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+}
+
+export interface IJustifyCenter {
+  display: string;
+  justifyContent: string;
+  alignItems: string;
+  flexDirection: string;
+  marginTop: number;
+  color?: string;
+  left?: string;
+  fontSize?: number;
+}

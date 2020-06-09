@@ -35,4 +35,14 @@ export default {
       })
       .then((info) => info.data);
   },
+  getHealthRelatedLocations: (query: string) => {
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${apiKey}`;
+    return axios
+      .get(corsURL + url, {
+        headers: {
+          crossdomain: true,
+        },
+      })
+      .then((info) => info.data);
+  },
 };

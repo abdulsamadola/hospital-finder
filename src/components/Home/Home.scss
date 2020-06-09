@@ -16,6 +16,19 @@
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 }
+.demo-infinite-container {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  overflow: auto;
+  padding: 8px 24px;
+  height: 300px;
+}
+.demo-loading-container {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+}
 
 .title {
   position: abolute;
