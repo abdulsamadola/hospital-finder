@@ -1,7 +1,7 @@
 <div align="center">
 <a href="https://github.com/abdulsamadola/enye-challenge-1" rel="noopener">
   
-  <img width="512" alt="Hospital Finder" src="https://is4-ssl.mzstatic.com/image/thumb/Purple128/v4/21/bf/76/21bf76bc-887d-75b9-6929-ba2a2ad503be/source/512x512bb.jpg">
+  <img width="256" alt="Hospital Finder" src="https://is4-ssl.mzstatic.com/image/thumb/Purple128/v4/21/bf/76/21bf76bc-887d-75b9-6929-ba2a2ad503be/source/512x512bb.jpg">
 
 </div>
 
@@ -89,15 +89,21 @@ $ yarn run build
 
 <div align="center">
  
-![image](https://user-images.g9f1e166e299b.png)
+![image](https://github.com/abdulsamadola/enye-challenge-1/blob/master/screenshots/1.png)
 
 <hr />
 
-![image](https://u433-c8d7791a9b81.png)
+![image](https://github.com/abdulsamadola/enye-challenge-1/blob/master/screenshots/2.png)
 
 <hr />
 
-![image](https://user-8f596.png)
+![image](https://github.com/abdulsamadola/enye-challenge-1/blob/master/screenshots/3.png)
+<hr />
+
+![image](https://github.com/abdulsamadola/enye-challenge-1/blob/master/screenshots/4.png)
+<hr />
+
+![image](https://github.com/abdulsamadola/enye-challenge-1/blob/master/screenshots/5.png)
 
 </div>
 
@@ -108,8 +114,8 @@ $ yarn run build
     |-- .DS_Store
     |-- .env
     |-- .gitignore
-    |-- README.md
     |-- LICENSE
+    |-- README.md
     |-- package.json
     |-- server.js
     |-- tsconfig.json
@@ -128,6 +134,12 @@ $ yarn run build
     |   |-- logo512.png
     |   |-- manifest.json
     |   |-- robots.txt
+    |-- screenshots
+    |   |-- 1.png
+    |   |-- 2.png
+    |   |-- 3.png
+    |   |-- 4.png
+    |   |-- 5.png
     |-- server
     |   |-- schema
     |       |-- index.js
@@ -158,6 +170,8 @@ $ yarn run build
         |   |-- Home
         |   |   |-- Home.scss
         |   |   |-- Home.tsx
+        |   |-- LandingPage
+        |   |   |-- LandingPage.tsx
         |   |-- ShowHospitals
         |   |   |-- ShowHospitals.scss
         |   |   |-- ShowHospitals.tsx
