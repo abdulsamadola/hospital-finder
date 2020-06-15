@@ -5,7 +5,7 @@ import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import firebase from "../../Services/firebase";
 import ShowHospitals from "../ShowHospitals/ShowHospitals";
-import "./Home.scss";
+//import "./Home.scss";
 import Api from "../../Services/dataService";
 import { useDebounce } from "../../hooks";
 import app from "../../Services/firebase";
@@ -226,7 +226,7 @@ const Home = (): JSX.Element => {
   };
 
   const menu = (
-    <Menu onClick={getHospitalsByDistance} style={{ zIndex: 99999999999999 }}>
+    <Menu onClick={getHospitalsByDistance}>
       <Menu.Item key="5000" icon={<PullRequestOutlined />}>
         5KM
       </Menu.Item>
@@ -417,7 +417,7 @@ const Home = (): JSX.Element => {
 
                 <div
                   className="demo-infinite-container"
-                  //onBlur={() => setIsHistoryButtonClick(false)}
+                  onBlur={() => setIsHistoryButtonClick(false)}
                 >
                   <List
                     dataSource={historyResults}

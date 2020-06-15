@@ -8,7 +8,6 @@
     "@googlemap-react/core": "^0.1.11",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^26.0.0",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
     "antd": "^4.3.1",
@@ -28,7 +27,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "ts-jest": "^26.1.0",
+    "ts-jest": "26.0.0",
     "typescript": "^3.9.3"
   },
   "scripts": {
@@ -36,7 +35,7 @@
     "server": "nodemon server.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "jest --watch",
     "eject": "react-scripts eject"
   },
   "jest": {
@@ -71,6 +70,7 @@
   "devDependencies": {
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",
+    "@types/jest": "^26.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "jest-enzyme": "^7.1.2",

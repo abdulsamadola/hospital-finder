@@ -8,10 +8,15 @@ interface IProps {
 }
 function CustomHeader({ current }: IProps) {
   return (
-    <Header>
+    <Header data-test="HeaderComponent">
       <div className="logo" />
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[current]}>
-        <Menu.Item key="1">
+      <Menu
+        data-test="menu"
+        theme="dark"
+        mode="horizontal"
+        defaultSelectedKeys={[current]}
+      >
+        <Menu.Item key="1" data-test="menu-item">
           <Link to="/">Home</Link>
         </Menu.Item>
         <Menu.Item key="2">
