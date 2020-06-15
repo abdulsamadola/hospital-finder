@@ -23,7 +23,7 @@ const SignUp = ({ history }: any) => {
         openNotificationWithIcon("success", msg);
         setIsLoading(false);
         setTimeout(() => {
-          history.push("/");
+          history.push("/Dashboard");
         }, 3000);
       } catch (error) {
         setIsLoading(false);

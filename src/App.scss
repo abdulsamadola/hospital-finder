@@ -56,6 +56,8 @@ body {
 //For Sign/Sign Up
 
 .site-layout-content {
+  animation: moveInLeft 0.9s ease-in 0.4s;
+  animation-fill-mode: backwards;
   display: flex;
   flex-direction: row;
   //flex-wrap: wrap;
@@ -85,6 +87,25 @@ body {
     rgba(27, 9, 121, 1) 53%,
     #3f51b5 100%
   );
+}
+.landing-left {
+  width: 100%;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+
+  //   height: 100%;
+  background: #fff;
+}
+.landing-right {
+  width: 100%;
+  //   height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(27, 9, 121, 1) 53%,
+    #3f51b5 100%
+  );
+  padding-top: 30px;
 }
 .main-right {
   width: 100%;
@@ -125,6 +146,30 @@ body {
   margin-left: 10px;
 }
 
+.center-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 100px;
+  animation: moveInBottom 0.5s ease-in 0.55s;
+  animation-fill-mode: backwards;
+}
+.landing-side-left {
+  font-size: 38px;
+  line-height: 1.2;
+  color: #fff;
+  margin-top: 70px;
+  margin-bottom: 0;
+  margin-left: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  text-align: center;
+  font-weight: 500;
+  animation: moveInLeft 0.5s ease-in 0.55s;
+  animation-fill-mode: backwards;
+  //width: 200px;
+}
+
 #components-layout-demo-top .logo {
   width: 120px;
   height: 31px;
@@ -134,3 +179,75 @@ body {
 }
 
 //Sign/Sign Up Ends
+
+//Button
+.btn:link,
+.btn:visited {
+  text-decoration: none;
+  text-transform: uppercase;
+  display: inline-block;
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 100px;
+  transition: all 0.5s;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn-white {
+  margin-top: 45px;
+  background-color: #fff;
+  color: #5d5f7b;
+}
+
+.btn-animated {
+  animation: moveInBottom 0.5s ease-in 0.55s;
+  animation-fill-mode: backwards;
+}
+
+//Animations
+@keyframes moveInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+@keyframes moveInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  80% {
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  80% {
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}

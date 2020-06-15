@@ -1,6 +1,7 @@
 import React from "react";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
+import Landing from "../components/LandingPage/LandingPage";
 import Home from "../components/Home/Home";
 import SignIn from "../components/SignIn/SignIn";
 import SignUp from "../components/SignUp/SignUp";
@@ -15,7 +16,8 @@ const Routes = (): JSX.Element => (
     <AuthProvider>
       <Router>
         <Switch>
-          <PrivateRoute exact path="/" component={Home} />
+          <Route exact path="/" component={Landing} />
+          <PrivateRoute path="/Dashboard" component={Home} />
           <Route path="/SignUp" exact component={SignUp} />
           <Route path="/SignIn" exact component={SignIn} />
         </Switch>

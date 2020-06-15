@@ -24,7 +24,7 @@ const SignIn = ({ history }: any) => {
         const msg = `Welcome Back, Login successful!`;
         openNotificationWithIcon("success", msg);
         setTimeout(() => {
-          return history.push("/");
+          return history.push("/Dashboard");
         }, 3000);
         setIsLoading(false);
       } catch (error) {
@@ -65,7 +65,7 @@ const SignIn = ({ history }: any) => {
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
-    return <Redirect to="/" />;
+    return <Redirect to="/Dashboard" />;
   }
   const inputStyle = { borderRadius: 20 };
 

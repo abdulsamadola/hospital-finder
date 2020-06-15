@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { message } from "antd";
 import { CloseOutlined, LogoutOutlined } from "@ant-design/icons";
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
+import { useLazyQuery } from "@apollo/react-hooks";
 import firebase from "../../Services/firebase";
 import ShowHospitals from "../ShowHospitals/ShowHospitals";
-//import "./Home.scss";
 import Api from "../../Services/dataService";
 import { useDebounce } from "../../hooks";
 import app from "../../Services/firebase";
@@ -30,10 +27,10 @@ import {
   HistoryOutlined,
 } from "@ant-design/icons";
 import colors from "../../styles";
-import { IHospital, IJustifyCenter } from "../../common";
+import { IHospital } from "../../common";
 
 const { Header } = Layout;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Home = (): JSX.Element => {
   //Hooks
@@ -77,11 +74,9 @@ const Home = (): JSX.Element => {
       variables: { input },
     });
     setIsWaitingForAutoCompleteData(true);
-    // Api.getPlacesAutocomplete(input).then((res) => {
-    //   setResults(res["predictions"]);
-    //   // setIsLoading(false);
-    // });
   };
+  //Check whetther graphql has returned results for places autocomplete
+
   if (
     placesAutocompleteData &&
     placesAutocompleteData.placesautocomplete &&
@@ -89,7 +84,6 @@ const Home = (): JSX.Element => {
   ) {
     setIsWaitingForAutoCompleteData(false);
     setResults(placesAutocompleteData.placesautocomplete.predictions);
-    console.log(placesAutocompleteData.placesautocomplete.predictions);
   }
 
   //Make a request to the Google place API with the user coordinate
@@ -151,45 +145,14 @@ const Home = (): JSX.Element => {
       setIsLoading(false);
     });
   }
-
-  // const getHeathRelatedPlaces = (): void => {
-  //   setHospitalResults([]);
-  //   setIsLoading(true);
-  //   setIsHistoryButtonClick(false);
-  //   //TODO: wireup graphql search results places
-  //   // const { loading, error, data } = useQuery(GET_HEALTH_PLACES, {
-  //   //   variables: { query: input },
-  //   // });
-  //   // query is executed here
-
-  //   getHospitals({
-  //     variables: { query: input }, // note: name = property shorthand
-  //     //suspend: true
-  //   });
-  //   setIsLoading(true);
-  //   if (data && data.places) setHospitalResults(data.places.results);
-  //   setIsLoading(false);
-  //   //COMING BACK HERE
-  //   // if (data) {
-  //   //   console.log(data);
-  //   //   setHospitalResults(data.places.results);
-  //   //   setIsLoading(false);
-  //   // }
-  //   // console.log(data);
-
-  //   // Api.getHealthRelatedLocations(input).then(({ results }): void => {
-  //   //   setHospitalResults(results);
-  //   //   console.log(results);
-  //   //   setIsLoading(false);
-  //   // });
-  // };
-
+  //Debounce the search bar input
   useEffect((): void => {
     placesAutoCompleteHandler(debouncedInput);
   }, [debouncedInput]);
 
   useEffect(() => {
     setIsLoading(true);
+    //Get User Current coordinate
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition((position: Position): void => {
         const coord = {
@@ -199,6 +162,7 @@ const Home = (): JSX.Element => {
         setCoordinate(coord);
         fetchHospitalsHandler(coord);
       });
+    //Listen for Realtime data from the firestore
     const db = firebase.firestore();
     return db.collection("search-histories").onSnapshot((snapShot) => {
       const historyData: any[] = [];
@@ -213,18 +177,21 @@ const Home = (): JSX.Element => {
     });
   }, []);
 
+  //Clear Saved search historys(for all) on Firestore
   const clearRecentSearchHistories = async () => {
     const db = firebase.firestore();
     const history = await db.collection("search-histories");
     historyResults.forEach((doc) => history.doc(doc.id).delete());
   };
 
+  //Clear Saved search history(single) on Firestore
   const clearSearchHistory = async (id: string) => {
     const db = firebase.firestore();
     const history = await db.collection("search-histories");
     history.doc(id).delete();
   };
 
+  //Menu Item for Changing Radius
   const menu = (
     <Menu onClick={getHospitalsByDistance}>
       <Menu.Item key="5000" icon={<PullRequestOutlined />}>
@@ -245,6 +212,7 @@ const Home = (): JSX.Element => {
     </Menu>
   );
 
+  //Listener for detecting search history icon clicks
   const historyViewHandler = (): void => {
     setResults([]);
     setIsHistoryButtonClick(!isHistoryButtonClick);
@@ -260,6 +228,7 @@ const Home = (): JSX.Element => {
     backgroundColor: "#fff",
   };
 
+  //To be called when enter button hits to search specific terms like pharmacy || medical e.t.c
   const searchSubmissionHandler = (
     e: React.FormEvent<HTMLFormElement>
   ): void => {
@@ -280,16 +249,17 @@ const Home = (): JSX.Element => {
         variables: { query: input },
       });
       if (data && data.places) setHospitalResults(data.places.results);
-      //  getHeathRelatedPlaces();
     }
   };
 
+  //Check whetther graphql has returned results for hospitals locations
   if (data && data.places && isWaitingForData) {
     setIsWaitingForData(false);
-    console.log(data);
     setHospitalResults(data.places.results);
     setIsLoading(false);
   }
+
+  //Get current UID from the context
   const { currentUser } = useContext(AuthContext);
   const user_id = currentUser["uid"];
 
