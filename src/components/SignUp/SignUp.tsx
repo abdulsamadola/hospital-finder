@@ -168,6 +168,7 @@ const SignUp = ({ history }: any) => {
           </div>
         </div>
       </Content>
+      <div className="clearfix"></div>
       <Footer />
     </Layout>
   );

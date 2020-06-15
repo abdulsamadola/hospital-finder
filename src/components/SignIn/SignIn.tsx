@@ -174,6 +174,7 @@ const SignIn = ({ history }: any) => {
           </div>
         </div>
       </Content>
+      <div className="clearfix"></div>
       <Footer />
     </Layout>
   );

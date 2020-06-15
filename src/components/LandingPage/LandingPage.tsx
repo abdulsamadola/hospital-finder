@@ -48,6 +48,7 @@ function LandingPage() {
           </div>
         </div>
       </Content>
+      <div className="clearfix"></div>
       <Footer />
     </Layout>
   );
