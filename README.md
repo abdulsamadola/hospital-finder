@@ -1,68 +1,199 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+<a href="https://github.com/abdulsamadola/enye-challenge-1" rel="noopener">
+  
+  <img width="512" alt="Hospital Finder" src="https://is4-ssl.mzstatic.com/image/thumb/Purple128/v4/21/bf/76/21bf76bc-887d-75b9-6929-ba2a2ad503be/source/512x512bb.jpg">
 
-## Available Scripts
+</div>
 
-In the project directory, you can run:
+<h3 align="center">Hospital Finder</h3>
 
-### `yarn start`
+<div align="center">
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+[![GitHub issues](https://img.shields.io/github/issues/abdulsamadola/enye-challenge-1)](https://github.com/abdulsamadola/enye-challenge-1/issues)
+[![GitHub forks](https://img.shields.io/github/forks/abdulsamadola/enye-challenge-1)](https://github.com/abdulsamadola/enye-challenge-1/network)
+[![GitHub stars](https://img.shields.io/github/stars/abdulsamadola/enye-challenge-1)](https://github.com/abdulsamadola/enye-challenge-1/stargazers)
+[![GitHub license](https://img.shields.io/github/license/abdulsamadola/enye-challenge-1)](https://github.com/abdulsamadola/enye-challenge-1/blob/master/LICENSE)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+</div>
 
-### `yarn test`
+## Table of Contents
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [About the Project](#about-the-project)
+- [Build with](#build-with)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Running](#running)
+- [Screenshots](#screenshots)
+- [File Structure](#file-structure)
+- [Unit Testing](#unit-testing)
+- [Running Unit tests](#running-unit-tests)
 
-### `yarn build`
+- [License](#license)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## About The Project
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+> **Hospital Finder** is an online web app that helps locate all the hospitals within a given area.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Build with
 
-### `yarn eject`
+- [React JS](https://reactjs.org/)
+- [React Router](https://reacttraining.com/react-router/web/guides/quick-start)
+- [Ant Design](https://https://ant.design/)
+- [Firebase](https://firebase.google.com/)
+- [GraphQL](https://graphql.org/)
+- [Apollo](https://www.apollographql.com/)
+- [Jest](https://jestjs.io/)
+- [Enzyme](https://enzymejs.github.io/enzyme/)
+- [Axios](https://github.com/axios/axios)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Getting Started
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> This is an list of needed instructions to set up your project locally, to get a local copy up and running follow these instructions.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Installation
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. **_Clone the repository_**
 
-## Learn More
+```sh
+$ git clone https://github.com/abdulsamadola/enye-challenge-1.git
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. **_Navigate to repository directory_**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```sh
+$ cd enye-challenge-1
+```
 
-### Code Splitting
+3. **_Install dependencies_**
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```sh
+$ yarn install
+```
 
-### Analyzing the Bundle Size
+### Running
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+1. **_Running on development mode_**
 
-### Making a Progressive Web App
+```sh
+$ yarn run server
+$ yarn run client
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+2. **Build for production**
 
-### Advanced Configuration
+```sh
+$ yarn run build
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+### Screenshots
 
-### Deployment
+<div align="center">
+ 
+![image](https://user-images.g9f1e166e299b.png)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+<hr />
 
-### `yarn build` fails to minify
+![image](https://u433-c8d7791a9b81.png)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+<hr />
+
+![image](https://user-8f596.png)
+
+</div>
+
+## File Structure
+
+<pre>
+|-- Hospital Finder
+    |-- .DS_Store
+    |-- .env
+    |-- .gitignore
+    |-- README.md
+    |-- LICENSE
+    |-- package.json
+    |-- server.js
+    |-- tsconfig.json
+    |-- yarn-error.log
+    |-- yarn.lock
+    |-- build
+    |   |-- favicon.ico
+    |   |-- logo192.png
+    |   |-- logo512.png
+    |   |-- manifest.json
+    |   |-- robots.txt
+    |-- public
+    |   |-- favicon.ico
+    |   |-- index.html
+    |   |-- logo192.png
+    |   |-- logo512.png
+    |   |-- manifest.json
+    |   |-- robots.txt
+    |-- server
+    |   |-- schema
+    |       |-- index.js
+    |-- src
+        |-- .DS_Store
+        |-- App.scss
+        |-- App.tsx
+        |-- index.css
+        |-- index.tsx
+        |-- react-app-env.d.ts
+        |-- setupTests.ts
+        |-- Services
+        |   |-- dataService.ts
+        |   |-- firebase.ts
+        |-- __tests__
+        |   |-- Footer.test.tsx
+        |   |-- Header.test.tsx
+        |-- common
+        |   |-- index.d.ts
+        |-- components
+        |   |-- CardTemplate
+        |   |   |-- CardTemplate.scss
+        |   |   |-- CardTemplate.tsx
+        |   |-- Footer
+        |   |   |-- Footer.tsx
+        |   |-- Header
+        |   |   |-- Header.tsx
+        |   |-- Home
+        |   |   |-- Home.scss
+        |   |   |-- Home.tsx
+        |   |-- ShowHospitals
+        |   |   |-- ShowHospitals.scss
+        |   |   |-- ShowHospitals.tsx
+        |   |-- SignIn
+        |   |   |-- SignIn.tsx
+        |   |-- SignUp
+        |       |-- SignUp.tsx
+        |-- hooks
+        |   |-- index.ts
+        |   |-- useDebounce.ts
+        |-- queries
+        |   |-- index.ts
+        |-- routes
+        |   |-- Auth.tsx
+        |   |-- PrivateRoute.tsx
+        |   |-- index.tsx
+        |-- styles
+        |   |-- index.ts
+        |-- testUtils
+        |   |-- index.ts
+        |-- utils
+            |-- index.ts
+</pre>
+
+## Unit testing
+
+> Each component in this project has its own unit test file separately inside \_\_tests\_\_ directory eg. Header.test.tsx
+
+### Running Unit tests
+
+> Run the following command.
+
+```sh
+yarn run test
+```
+
+## License
+
+> This software is licensed under MIT License, See [License](https://github.com/abdulsamadola/enye-challenge-1/blob/master/LICENSE) for more information ©Abdulsamad Suleiman.
