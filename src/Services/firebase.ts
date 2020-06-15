@@ -1,4 +1,6 @@
 import firebase from "firebase";
+import "firebase/auth";
+
 import { IFirebase } from "../common/";
 
 const firebaseConfig: IFirebase = {

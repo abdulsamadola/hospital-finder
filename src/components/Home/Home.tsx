@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { message } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
-
+import { CloseOutlined, LogoutOutlined } from "@ant-design/icons";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
 import firebase from "../../Services/firebase";
 import ShowHospitals from "../ShowHospitals/ShowHospitals";
 import "./Home.scss";
 import Api from "../../Services/dataService";
 import { useDebounce } from "../../hooks";
+import app from "../../Services/firebase";
+import { AuthContext } from "../../routes/Auth";
+import { GET_HEALTH_PLACES, GET_PLACES_AUTOCOMPLETE } from "../../queries/";
 
 import {
   Menu,
@@ -32,43 +36,65 @@ const { Header } = Layout;
 const { Title, Text } = Typography;
 
 const Home = (): JSX.Element => {
+  //Hooks
   const [results, setResults] = useState<any[]>([]);
   const [historyResults, setHistoryResults] = useState<any[]>([]);
   const [hospitalResults, setHospitalResults] = useState<IHospital[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isWaitingForData, setIsWaitingForData] = useState<boolean>(true);
+  const [
+    isWaitingForAutoCompleteData,
+    setIsWaitingForAutoCompleteData,
+  ] = useState<boolean>(true);
   const [isHistoryButtonClick, setIsHistoryButtonClick] = useState<boolean>(
     false
   );
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
   const [coordinate, setCoordinate] = useState<object>({});
-
-  function onInputChange(input: string): void {
+  const [getHospitals, { data, loading, error }] = useLazyQuery(
+    GET_HEALTH_PLACES
+  );
+  const [
+    getPlacesAutocomplete,
+    { data: placesAutocompleteData },
+  ] = useLazyQuery(GET_PLACES_AUTOCOMPLETE);
+  //Handle User Input From Search Bar
+  const onInputChange = (input: string): void => {
     setInput(input);
-  }
+  };
 
+  //Debounce User Input for 500s before making network request
   const debouncedInput = useDebounce(input, 500);
 
+  //Make a request to Autocomplete Google API
   const placesAutoCompleteHandler = (input: string): void => {
     if (debouncedInput === "") return;
     //setIsLoading(true);
     setIsHistoryButtonClick(false);
 
-    Api.getPlacesAutocomplete(input).then((res) => {
-      setResults(res["predictions"]);
-      // setIsLoading(false);
+    getPlacesAutocomplete({
+      variables: { input },
     });
+    setIsWaitingForAutoCompleteData(true);
+    // Api.getPlacesAutocomplete(input).then((res) => {
+    //   setResults(res["predictions"]);
+    //   // setIsLoading(false);
+    // });
   };
-  function confirm(e: any) {
-    console.log(e);
-    message.success("Click on Yes");
+  if (
+    placesAutocompleteData &&
+    placesAutocompleteData.placesautocomplete &&
+    isWaitingForAutoCompleteData
+  ) {
+    setIsWaitingForAutoCompleteData(false);
+    setResults(placesAutocompleteData.placesautocomplete.predictions);
+    console.log(placesAutocompleteData.placesautocomplete.predictions);
   }
 
-  function cancel(e: any) {
-    console.log(e);
-    message.error("Click on No");
-  }
+  //Make a request to the Google place API with the user coordinate
   const getAddressCoordinate = (
+    user_id: string,
     placeID: string,
     address: string,
     description: string
@@ -82,14 +108,17 @@ const Home = (): JSX.Element => {
       const coordinate = result.geometry.location;
       setCoordinate(coordinate);
 
-      //Get Nearby Hospital
+      //Get Nearby Hospital by invoking this function
       fetchHospitalsHandler(coordinate);
     });
+
     //Save the address/placeID  as history on Firebase
-    saveAddressOnFirebase({ placeID, address, description });
+    saveAddressOnFirebase({ user_id, placeID, address, description });
   };
 
+  //Save user Search History to the Firebase
   const saveAddressOnFirebase = (data: {
+    user_id: string;
     placeID: string;
     address: string;
     description: string;
@@ -99,6 +128,7 @@ const Home = (): JSX.Element => {
     if (!findPlace) db.collection("search-histories").add(data);
   };
 
+  //Fetch Nearby hospital by user coordinate with 1000m as a initial radius.
   const fetchHospitalsHandler = (coord: object): void => {
     setIsFocus(false);
     setIsHistoryButtonClick(false);
@@ -110,6 +140,7 @@ const Home = (): JSX.Element => {
     });
   };
 
+  //GET HOSPITAL BY DISTANCE
   function getHospitalsByDistance(e: any): void {
     setHospitalResults([]);
     setIsLoading(true);
@@ -120,16 +151,38 @@ const Home = (): JSX.Element => {
       setIsLoading(false);
     });
   }
-  function getHeathRelatedPlaces(): void {
-    setHospitalResults([]);
-    setIsLoading(true);
-    setIsHistoryButtonClick(false);
-    Api.getHealthRelatedLocations(input).then(({ results }): void => {
-      setHospitalResults(results);
-      console.log(results);
-      setIsLoading(false);
-    });
-  }
+
+  // const getHeathRelatedPlaces = (): void => {
+  //   setHospitalResults([]);
+  //   setIsLoading(true);
+  //   setIsHistoryButtonClick(false);
+  //   //TODO: wireup graphql search results places
+  //   // const { loading, error, data } = useQuery(GET_HEALTH_PLACES, {
+  //   //   variables: { query: input },
+  //   // });
+  //   // query is executed here
+
+  //   getHospitals({
+  //     variables: { query: input }, // note: name = property shorthand
+  //     //suspend: true
+  //   });
+  //   setIsLoading(true);
+  //   if (data && data.places) setHospitalResults(data.places.results);
+  //   setIsLoading(false);
+  //   //COMING BACK HERE
+  //   // if (data) {
+  //   //   console.log(data);
+  //   //   setHospitalResults(data.places.results);
+  //   //   setIsLoading(false);
+  //   // }
+  //   // console.log(data);
+
+  //   // Api.getHealthRelatedLocations(input).then(({ results }): void => {
+  //   //   setHospitalResults(results);
+  //   //   console.log(results);
+  //   //   setIsLoading(false);
+  //   // });
+  // };
 
   useEffect((): void => {
     placesAutoCompleteHandler(debouncedInput);
@@ -152,7 +205,11 @@ const Home = (): JSX.Element => {
       snapShot.forEach((doc) =>
         historyData.push({ ...doc.data(), id: doc.id })
       );
-      setHistoryResults(historyData.reverse());
+      //Filter History For Current user
+      const filterHistoryForCurrentUser = historyData.filter(
+        (histy) => histy.user_id == user_id
+      );
+      setHistoryResults(filterHistoryForCurrentUser.reverse());
     });
   }, []);
 
@@ -207,15 +264,35 @@ const Home = (): JSX.Element => {
     e: React.FormEvent<HTMLFormElement>
   ): void => {
     e.preventDefault();
+    setHospitalResults([]);
+    setIsLoading(true);
+    setIsHistoryButtonClick(false);
+
     if (
       input.includes("medical") ||
       input.includes("hospital") ||
       input.includes("clinic") ||
       input.includes("hospital") ||
       input.includes("pharmacy")
-    )
-      getHeathRelatedPlaces();
+    ) {
+      setIsWaitingForData(true);
+      getHospitals({
+        variables: { query: input },
+      });
+      if (data && data.places) setHospitalResults(data.places.results);
+      //  getHeathRelatedPlaces();
+    }
   };
+
+  if (data && data.places && isWaitingForData) {
+    setIsWaitingForData(false);
+    console.log(data);
+    setHospitalResults(data.places.results);
+    setIsLoading(false);
+  }
+  const { currentUser } = useContext(AuthContext);
+  const user_id = currentUser["uid"];
+
   return (
     <div>
       {/* <NavBar /> */}
@@ -280,6 +357,17 @@ const Home = (): JSX.Element => {
                   </Button>
                 </Dropdown>
               </div>
+              <span
+                style={{
+                  marginLeft: 100,
+                  color: colors.white,
+                  cursor: "pointer",
+                }}
+                onClick={() => app.auth().signOut()}
+              >
+                <LogoutOutlined />
+                {"  "} Sign Out
+              </span>
             </div>
             {/* Suggestion Card */}
             <div style={suggestionCardStyle}>
@@ -292,6 +380,7 @@ const Home = (): JSX.Element => {
                       <List.Item
                         onClick={() =>
                           getAddressCoordinate(
+                            user_id,
                             place_id,
                             item["main_text"],
                             item["secondary_text"]
@@ -328,7 +417,7 @@ const Home = (): JSX.Element => {
 
                 <div
                   className="demo-infinite-container"
-                  onBlur={() => setIsHistoryButtonClick(false)}
+                  //onBlur={() => setIsHistoryButtonClick(false)}
                 >
                   <List
                     dataSource={historyResults}
@@ -337,7 +426,12 @@ const Home = (): JSX.Element => {
                         <div
                           style={{ marginLeft: 10, textAlign: "left" }}
                           onClick={() =>
-                            getAddressCoordinate(placeID, address, description)
+                            getAddressCoordinate(
+                              user_id,
+                              placeID,
+                              address,
+                              description
+                            )
                           }
                         >
                           <List.Item.Meta

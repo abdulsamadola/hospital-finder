@@ -33,7 +33,7 @@ const ShowHospitals = ({ data }: IProps): JSX.Element => {
     >
       {data.map((hospital: any) => {
         return (
-          <div key={id}>
+          <div key={hospital.id}>
             <CardTemplate
               name={hospital.name}
               formatted_address={hospital.vicinity}
